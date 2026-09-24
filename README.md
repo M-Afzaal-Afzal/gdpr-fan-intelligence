@@ -173,3 +173,7 @@ and [`docs/DECISIONS.md`](docs/DECISIONS.md) record where work stands and why.
 - Batch CSV upload reusing the single-message pipeline
 - Stronger German NER (`de_core_news` spaCy model)
 - AuthN/AuthZ, rate limiting and an audit-log dashboard for production
+
+## License
+
+[MIT](LICENSE) © 2026 Muhammad Afzaal Afzal
