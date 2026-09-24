@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+
+/*
+  Tailwind v4 — clean ops-console theme.
+  Single sans family (DM Sans) + mono for data only.
+*/
+
+@theme {
+  --color-background: oklch(0.97 0.008 85);
+  --color-foreground: oklch(0.22 0.025 250);
+
+  --color-card: oklch(0.995 0.004 85);
+  --color-card-foreground: oklch(0.22 0.025 250);
+
+  --color-muted: oklch(0.945 0.008 85);
+  --color-muted-foreground: oklch(0.5 0.015 250);
+
+  --color-border: oklch(0.88 0.01 85);
+  --color-input: oklch(0.96 0.008 85);
+  --color-ring: oklch(0.45 0.1 155);
+
+  --color-primary: oklch(0.45 0.1 155);
+  --color-primary-foreground: oklch(0.99 0.005 85);
+
+  --color-accent: oklch(0.93 0.015 85);
+  --color-accent-foreground: oklch(0.28 0.03 250);
+
+  --color-destructive: oklch(0.52 0.18 25);
+  --color-destructive-foreground: oklch(0.99 0 0);
+
+  --color-success: oklch(0.48 0.1 155);
+  --color-success-foreground: oklch(0.99 0 0);
+
+  --color-warning: oklch(0.62 0.14 55);
+  --color-warning-foreground: oklch(0.22 0.04 55);
+
+  --color-privacy-safe: oklch(0.48 0.1 155);
+  --color-privacy-safe-foreground: oklch(0.99 0 0);
+  --color-privacy-blocked: oklch(0.62 0.14 55);
+  --color-privacy-blocked-foreground: oklch(0.22 0.04 55);
+
+  --color-pipeline-active: oklch(0.45 0.07 230);
+  --color-pipeline-active-foreground: oklch(0.99 0 0);
+  --color-pipeline-complete: oklch(0.45 0.1 155);
+  --color-pipeline-complete-foreground: oklch(0.99 0 0);
+
+  --color-mask-highlight: oklch(0.4 0.06 230);
+  --color-mask-highlight-bg: oklch(0.94 0.02 230);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-background: oklch(0.18 0.012 250);
+    --color-foreground: oklch(0.93 0.008 85);
+    --color-card: oklch(0.21 0.014 250);
+    --color-card-foreground: oklch(0.93 0.008 85);
+    --color-muted: oklch(0.25 0.012 250);
+    --color-muted-foreground: oklch(0.65 0.012 250);
+    --color-border: oklch(0.32 0.012 250);
+    --color-input: oklch(0.23 0.012 250);
+    --color-primary: oklch(0.6 0.12 155);
+    --color-primary-foreground: oklch(0.15 0.02 155);
+    --color-accent: oklch(0.27 0.015 250);
+    --color-accent-foreground: oklch(0.92 0.01 85);
+
+    --color-privacy-safe: oklch(0.6 0.12 155);
+    --color-privacy-safe-foreground: oklch(0.15 0.02 155);
+    --color-privacy-blocked: oklch(0.72 0.11 55);
+    --color-privacy-blocked-foreground: oklch(0.18 0.04 55);
+
+    --color-pipeline-active: oklch(0.62 0.08 230);
+    --color-pipeline-active-foreground: oklch(0.15 0.02 230);
+    --color-pipeline-complete: oklch(0.6 0.12 155);
+    --color-pipeline-complete-foreground: oklch(0.15 0.02 155);
+
+    --color-mask-highlight: oklch(0.68 0.07 230);
+    --color-mask-highlight-bg: oklch(0.27 0.025 230);
+  }
+}
+
+html,
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: 'rlig' 1, 'calt' 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+::selection {
+  background: oklch(0.75 0.08 155);
+}

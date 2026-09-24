@@ -1,0 +1,20 @@
+---
+description: Cross-tool handoff workflow
+alwaysApply: true
+---
+
+# AI workflow
+
+This repo is worked on by multiple AI tools. Continuity lives in
+`docs/AI_HANDOFF.md`.
+
+- **Start every larger task by reading `docs/AI_HANDOFF.md`** (plus `AGENTS.md`
+  and `docs/PROJECT_CONTEXT.md`).
+- If a handoff exists, **do not restart from zero** — continue from
+  "Next Recommended Steps".
+- Before finishing, **update `docs/AI_HANDOFF.md`** with what changed, commands
+  run, errors/blockers, decisions, and the next steps.
+- Log new decisions in `docs/DECISIONS.md`; log new errors in
+  `docs/ERRORS_AND_FIXES.md`; update `docs/OPEN_TASKS.md`.
+
+Full workflow and copy-paste handoff prompts: `docs/AI_WORKFLOW.md`.

@@ -1,0 +1,26 @@
+---
+description: Repo-specific coding rules
+alwaysApply: true
+---
+
+# Code quality
+
+- **Reuse existing patterns.** Backend: small pure functions in
+  `app/services/`. Frontend: shadcn-style primitives in `components/ui/` and the
+  `cn()` helper in `lib/utils.ts`. Don't create duplicate components/utilities.
+- **Don't add new dependencies** unless necessary; prefer what's installed
+  (`backend/pyproject.toml`, `frontend/package.json`).
+- **Keep the API contract in sync:** a change to `backend/app/schemas.py` must
+  be mirrored in `frontend/lib/types.ts`.
+- **Privacy first:** never weaken the ten rules in `AGENTS.md`. No `entity_value`
+  storage; raw message only hashed; frontend holds no secrets and runs no PII
+  detection.
+- **Tailwind v4 only:** no `tailwind.config.js`; tokens live in
+  `app/globals.css` via `@theme`.
+- **Run checks before finishing.** Backend: `uv run pytest` + `uv run ruff
+  check .` + `uv run mypy app`. Frontend: `pnpm lint` + `pnpm type-check` +
+  `pnpm build`. After touching the pipeline, run the leak test in
+  `docs/COMMANDS.md`.
+- **Explain changed files** in your final summary (what changed and why).
+- Prefer **TDD** for detector/pipeline changes (see
+  `backend/app/tests/test_pipeline_edge_cases.py`).

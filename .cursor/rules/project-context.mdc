@@ -1,0 +1,22 @@
+---
+description: Project context and canonical instructions
+alwaysApply: true
+---
+
+# Project context
+
+This is the **Privacy-First Fan Intelligence Pipeline** — a GDPR-safe AI
+pipeline for football fan messages. Raw PII is detected and masked on the
+backend before any LLM call, and is never stored.
+
+Follow the canonical instructions, do not duplicate them here:
+
+- Read **`AGENTS.md`** for the full picture: stack, commands, the ten privacy
+  rules, code style, git workflow, and safety rules.
+- Read **`docs/PROJECT_CONTEXT.md`** for what the project is and how it's built.
+
+Key facts:
+- Backend: Python 3.12 + FastAPI, managed by **uv** (Ruff, mypy, pytest).
+- Frontend: Next.js 15 + Tailwind v4 + TypeScript, managed by **pnpm**.
+- The privacy pipeline lives in `backend/app/services/`.
+- Tailwind v4 only — no `tailwind.config.js`.

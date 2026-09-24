@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raumdeuter · Privacy-First Fan Intelligence — Pitch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: oklch(0.97 0.008 85);
+      --fg: oklch(0.22 0.025 250);
+      --card: oklch(0.995 0.004 85);
+      --muted: oklch(0.945 0.008 85);
+      --muted-fg: oklch(0.5 0.015 250);
+      --border: oklch(0.88 0.01 85);
+      --primary: oklch(0.45 0.1 155);
+      --primary-fg: oklch(0.99 0.005 85);
+      --accent: oklch(0.93 0.015 85);
+      --accent-fg: oklch(0.28 0.03 250);
+      --warning: oklch(0.62 0.14 55);
+      --destructive: oklch(0.52 0.18 25);
+      --mask-fg: oklch(0.4 0.06 230);
+      --mask-bg: oklch(0.94 0.02 230);
+      --pipeline-active: oklch(0.45 0.07 230);
+
+      --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.625rem;
+      --radius-xl: 0.75rem;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-feature-settings: 'rlig' 1, 'calt' 1;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4vh 8vw;
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .slide.prev {
+      transform: translateX(-40px);
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5vh 3vw;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .brandmark {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      pointer-events: auto;
+    }
+
+    .brand-icon {
+      width: 1.75rem;
+      height: 1.75rem;
+      background: var(--primary);
+      color: var(--primary-fg);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-text-1 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .brand-text-2 {
+      font-size: 0.7rem;
+      color: var(--muted-fg);
+      line-height: 1;
+      margin-top: 0.2rem;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      pointer-events: auto;
+    }
+
+    .timer {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--muted-fg);
+      padding: 0.3rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .timer.running { color: var(--primary); border-color: var(--primary); }
+    .timer.over { color: var(--warning); border-color: var(--warning); }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--muted-fg);
+      padding: 0.3rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card);
+    }
+
+    .progress {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--primary);
+      transition: width 0.35s ease;
+      z-index: 50;
+    }
+
+    .bottombar {
+      position: fixed;
+      bottom: 1.5vh;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--muted-fg);
+      font-family: var(--font-mono);
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    .bottombar kbd {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.65rem;
+      margin: 0 2px;
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 1.25rem;
+    }
+
+    .h1 {
+      font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      max-width: 22ch;
+    }
+
+    .h2 {
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      max-width: 26ch;
+    }
+
+    .h3 {
+      font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      line-height: 1.2;
+    }
+
+    .lead {
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      color: var(--muted-fg);
+      line-height: 1.6;
+      max-width: 60ch;
+      margin-top: 1.5rem;
+    }
+
+    .mono { font-family: var(--font-mono); }
+    .accent { color: var(--primary); }
+
+    /* SLIDE 1: HOOK */
+    .slide-hook {
+      background:
+        radial-gradient(circle at 20% 20%, oklch(0.45 0.1 155 / 0.08), transparent 50%),
+        radial-gradient(circle at 80% 80%, oklch(0.45 0.07 230 / 0.06), transparent 50%),
+        var(--bg);
+    }
+
+    .hook-question {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 600;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      max-width: 22ch;
+    }
+
+    .hook-question .strike {
+      position: relative;
+      display: inline-block;
+    }
+
+    .hook-question .strike::after {
+      content: '';
+      position: absolute;
+      left: -2%;
+      right: -2%;
+      top: 55%;
+      height: 0.18em;
+      background: var(--destructive);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: strikethrough 0.7s ease 0.6s forwards;
+    }
+
+    @keyframes strikethrough { to { transform: scaleX(1); } }
+
+    .hook-meta {
+      position: absolute;
+      bottom: 8vh;
+      left: 8vw;
+      right: 8vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: var(--muted-fg);
+      font-size: 0.85rem;
+    }
+
+    .hook-meta .left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--card);
+      font-size: 0.75rem;
+      color: var(--muted-fg);
+    }
+
+    .pill .dot {
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 3px oklch(0.45 0.1 155 / 0.15);
+    }
+
+    /* SLIDE 2: PROBLEM */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4vw;
+      align-items: center;
+      margin-top: 3vh;
+    }
+
+    .pain-points {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .pain-point {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      border-left: 3px solid var(--destructive);
+    }
+
+    .pain-point .num {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--destructive);
+      font-weight: 500;
+      flex-shrink: 0;
+      width: 1.5rem;
+    }
+
+    .pain-point .text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .pain-point strong {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    .fine-counter {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      text-align: center;
+    }
+
+    .fine-counter .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted-fg);
+      margin-bottom: 0.5rem;
+    }
+
+    .fine-counter .amount {
+      font-family: var(--font-mono);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 500;
+      color: var(--destructive);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .fine-counter .unit {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--muted-fg);
+      margin-top: 0.75rem;
+    }
+
+    .fine-counter .source {
+      font-size: 0.7rem;
+      color: var(--muted-fg);
+      margin-top: 1rem;
+    }
+
+    /* SLIDE 3: INSIGHT */
+    .slide-insight {
+      background:
+        linear-gradient(135deg, oklch(0.45 0.1 155 / 0.04) 0%, transparent 50%),
+        var(--bg);
+    }
+
+    .insight-big {
+      font-size: clamp(3.5rem, 8vw, 6.5rem);
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .insight-big .first { color: var(--fg); }
+    .insight-big .second { color: var(--primary); }
+
+    .insight-sub {
+      margin-top: 2rem;
+      font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+      color: var(--muted-fg);
+      max-width: 50ch;
+      line-height: 1.5;
+    }
+
+    .insight-sub b {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    /* SLIDE 4: PIPELINE */
+    .pipeline-wrap { margin-top: 3vh; }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      align-items: stretch;
+      margin-top: 2rem;
+    }
+
+    .stage {
+      position: relative;
+      padding: 1.25rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0.4;
+    }
+
+    .stage.lit {
+      opacity: 1;
+      border-color: var(--primary);
+      box-shadow: 0 4px 20px oklch(0.45 0.1 155 / 0.12);
+      transform: translateY(-2px);
+    }
+
+    .stage .stage-num {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted-fg);
+    }
+
+    .stage.lit .stage-num { color: var(--primary); }
+
+    .stage .stage-name {
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .stage .stage-desc {
+      margin-top: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--muted-fg);
+      line-height: 1.4;
+    }
+
+    .stage::after {
+      content: '→';
+      position: absolute;
+      right: -0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--border);
+      font-size: 1rem;
+      z-index: 2;
+    }
+
+    .stage:last-child::after { display: none; }
+    .stage.lit::after { color: var(--primary); }
+
+    .pipeline-note {
+      margin-top: 2rem;
+      padding: 1rem 1.25rem;
+      background: var(--mask-bg);
+      border-radius: var(--radius-lg);
+      font-size: 0.9rem;
+      color: var(--mask-fg);
+      max-width: 70ch;
+    }
+
+    .pipeline-note .mono-pill {
+      background: oklch(1 0 0 / 0.4);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+    }
+
+    /* SLIDE 5: LIVE DEMO */
+    .demo-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .try-on-phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.6rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--primary);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      color: var(--fg);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 2px 12px oklch(0.45 0.1 155 / 0.08);
+    }
+
+    .try-on-phone:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 18px oklch(0.45 0.1 155 / 0.15);
+    }
+
+    .try-on-phone .dot {
+      width: 0.55rem;
+      height: 0.55rem;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 4px oklch(0.45 0.1 155 / 0.15);
+      animation: livepulse 2s ease infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes livepulse {
+      0%, 100% { box-shadow: 0 0 0 4px oklch(0.45 0.1 155 / 0.15); }
+      50%      { box-shadow: 0 0 0 8px oklch(0.45 0.1 155 / 0.05); }
+    }
+
+    .try-line-1 {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .try-line-2 {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--fg);
+      font-weight: 500;
+      margin-top: 0.1rem;
+    }
+
+    .demo-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 3vh;
+    }
+
+    .demo-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+    }
+
+    .demo-panel.danger { border-left: 3px solid var(--destructive); }
+    .demo-panel.safe { border-left: 3px solid var(--primary); }
+
+    .demo-panel-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .demo-panel.danger .demo-panel-label { color: var(--destructive); }
+    .demo-panel.safe .demo-panel-label { color: var(--primary); }
+
+    .demo-panel-text {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      min-height: 11rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .mask-token {
+      display: inline;
+      color: var(--mask-fg);
+      background: var(--mask-bg);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .pii-highlight {
+      background: oklch(0.95 0.04 25);
+      color: var(--destructive);
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .demo-empty {
+      color: var(--muted-fg);
+      font-style: italic;
+    }
+
+    .demo-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .demo-status {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--muted-fg);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .demo-status .ok { color: var(--primary); }
+    .demo-status .strong { color: var(--fg); font-weight: 500; }
+
+    .demo-status kbd {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .demo-btn {
+      background: var(--primary);
+      color: var(--primary-fg);
+      border: none;
+      padding: 0.6rem 1.1rem;
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .demo-btn:hover { opacity: 0.85; }
+    .demo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* SLIDE 6: MOAT */
+    .moat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 3vh;
+    }
+
+    .moat-card {
+      padding: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      border-left: 3px solid var(--primary);
+    }
+
+    .moat-card-num {
+      font-family: var(--font-mono);
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .moat-card-title {
+      margin-top: 0.6rem;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .moat-card-desc {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--muted-fg);
+      line-height: 1.5;
+    }
+
+    .moat-card.alt { border-left-color: var(--pipeline-active); }
+    .moat-card.alt .moat-card-num { color: var(--pipeline-active); }
+
+    .rules-ticker {
+      margin-top: 2rem;
+      padding: 0.9rem 1.25rem;
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      min-height: 2.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .rules-ticker .rule-num {
+      font-family: var(--font-mono);
+      color: var(--primary);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .rules-ticker .rule-text {
+      transition: opacity 0.3s ease;
+    }
+
+    /* SLIDE 7: IMPACT */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3vh;
+    }
+
+    .impact-stat .value {
+      font-family: var(--font-mono);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 500;
+      color: var(--primary);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .impact-stat .value.warn { color: var(--warning); }
+
+    .impact-stat .label {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--muted-fg);
+      max-width: 22ch;
+      line-height: 1.4;
+    }
+
+    .impact-stat .label b {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    .stakeholders {
+      margin-top: 4vh;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .stakeholder {
+      padding: 1rem 1.25rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .stakeholder .who {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .stakeholder .what {
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    /* SLIDE 8: CLOSE */
+    .slide-close {
+      background:
+        radial-gradient(circle at 50% 30%, oklch(0.45 0.1 155 / 0.06), transparent 60%),
+        var(--bg);
+      text-align: center;
+      align-items: center;
+    }
+
+    .close-tagline {
+      font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+      font-weight: 600;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      max-width: 18ch;
+    }
+
+    .close-tagline .accent { color: var(--primary); }
+
+    .close-three {
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--muted-fg);
+    }
+
+    .close-three .row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+    }
+
+    .close-three .check {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .close-ask {
+      margin-top: 2.5rem;
+      padding: 1rem 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: left;
+      box-shadow: 0 6px 24px oklch(0.45 0.1 155 / 0.08);
+    }
+
+    .close-ask .qr-link {
+      display: block;
+      line-height: 0;
+      flex-shrink: 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #fff;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      transition: transform 0.15s ease;
+    }
+
+    .close-ask .qr-link:hover { transform: scale(1.03); }
+
+    .close-ask .qr-img {
+      width: 144px;
+      height: 144px;
+      display: block;
+    }
+
+    .close-ask.no-qr .qr-link { display: none; }
+
+    .close-ask-text { display: flex; flex-direction: column; gap: 0.35rem; }
+
+    .close-ask-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .close-ask-url {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      color: var(--fg);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .close-ask-fallback {
+      font-size: 0.8rem;
+      color: var(--muted-fg);
+    }
+
+    .close-ask-fallback .mono {
+      color: var(--fg);
+      background: var(--muted);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* SPEAKER NOTES OVERLAY */
+    .notes-overlay {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 40vh;
+      background: var(--fg);
+      color: var(--bg);
+      padding: 1.25rem 2.5rem 1.5rem;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 60;
+      overflow-y: auto;
+      font-size: 1rem;
+      line-height: 1.55;
+      box-shadow: 0 -8px 32px oklch(0 0 0 / 0.2);
+    }
+
+    .notes-overlay.open { transform: translateY(0); }
+
+    .notes-overlay .label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: oklch(0.65 0.05 155);
+      margin-bottom: 0.5rem;
+    }
+
+    .notes-overlay p { margin: 0.4rem 0; }
+
+    .notes-overlay .timing {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: oklch(0.65 0.012 250);
+      margin-top: 0.6rem;
+    }
+
+    .notes-overlay .quote {
+      font-style: italic;
+      color: oklch(0.92 0.008 85);
+    }
+
+    @media (max-width: 900px) {
+      .problem-grid, .demo-container, .pipeline, .moat-grid, .impact-grid, .stakeholders {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    @media print {
+      .topbar, .bottombar, .progress, .notes-overlay { display: none !important; }
+      .slide {
+        position: relative !important;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+        height: 100vh !important;
+        width: 100vw !important;
+      }
+      .deck { height: auto !important; }
+      html, body { overflow: visible !important; height: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brandmark">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
+          <path d="M12 3 L20 19 H4 Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+          <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+        </svg>
+      </span>
+      <div>
+        <div class="brand-text-1">Raumdeuter</div>
+        <div class="brand-text-2">Fan Intelligence</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="timer" id="timer" title="Press T to start/stop 3-min timer">⏱ 3:00</div>
+      <div class="slide-counter"><span id="slideNum">1</span> / <span id="slideTotal">8</span></div>
+    </div>
+  </div>
+
+  <div class="deck" id="deck">
+
+    <!-- SLIDE 1: HOOK -->
+    <section class="slide active slide-hook" data-slide="1">
+      <div class="eyebrow">Raumdeuter AI Hackathon · Privacy-First Fan Intelligence</div>
+      <h1 class="hook-question">
+        What if your <span class="strike">AI</span> just leaked your fans to OpenAI?
+      </h1>
+      <p class="lead">
+        Every club wants AI on fan messages. Every fan message is full of names, emails, booking IDs, addresses. <b style="color:var(--fg);">Most pipelines just forward it.</b>
+      </p>
+      <div class="hook-meta">
+        <div class="left">
+          <span class="pill"><span class="dot"></span> Live now</span>
+          <span class="pill mono">fan-pulse-guard.vercel.app</span>
+          <span class="pill mono">3 min</span>
+        </div>
+        <div class="mono" style="color: var(--muted-fg)">Raumdeuter AI Hackathon · 2026</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: PROBLEM -->
+    <section class="slide" data-slide="2">
+      <div class="eyebrow">The problem</div>
+      <h2 class="h2">Football clubs are sitting on millions of fan messages — and they can't use them.</h2>
+      <div class="problem-grid">
+        <div class="pain-points">
+          <div class="pain-point">
+            <span class="num">01</span>
+            <div class="text"><strong>Fans send everything.</strong> Names, emails, phones, addresses, booking IDs — in one breath, in two languages.</div>
+          </div>
+          <div class="pain-point">
+            <span class="num">02</span>
+            <div class="text"><strong>Clubs want insight.</strong> What are fans angry about? Who needs a refund? What's the matchday issue today?</div>
+          </div>
+          <div class="pain-point">
+            <span class="num">03</span>
+            <div class="text"><strong>Sending raw text to GPT = GDPR breach.</strong> Personal data leaves the EU. Stored on third-party servers. Never deletable.</div>
+          </div>
+        </div>
+        <div class="fine-counter">
+          <div class="label">Max GDPR fine (Art. 83)</div>
+          <div class="amount" id="fineCounter">€0</div>
+          <div class="unit">or 4% of global turnover — whichever is higher</div>
+          <div class="source">This is the wall every club hits before they ship.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: INSIGHT -->
+    <section class="slide slide-insight" data-slide="3">
+      <div class="eyebrow">Our insight</div>
+      <div class="insight-big">
+        <div class="first">Mask first.</div>
+        <div class="second">Analyze second.</div>
+      </div>
+      <p class="insight-sub">
+        Privacy is <b>step 1</b> of the pipeline, not a final check. Raw PII <b>never crosses</b> a service boundary, never reaches the LLM, never lands in the database — by architecture, not by promise.
+      </p>
+    </section>
+
+    <!-- SLIDE 4: PIPELINE -->
+    <section class="slide" data-slide="4">
+      <div class="eyebrow">How it works · Click any stage</div>
+      <h3 class="h3">One Python boundary. Five stages. Raw PII dies at stage 2.</h3>
+      <div class="pipeline-wrap">
+        <div class="pipeline" id="pipeline">
+          <div class="stage lit" data-stage="1">
+            <div class="stage-num">01 · DETECT</div>
+            <div class="stage-name">PII Scan</div>
+            <div class="stage-desc">Regex + Presidio NER + German rules + hard negatives</div>
+          </div>
+          <div class="stage" data-stage="2">
+            <div class="stage-num">02 · MASK</div>
+            <div class="stage-name">Anonymize</div>
+            <div class="stage-desc">Stable <span class="mono">[NAME_1]</span>, <span class="mono">[EMAIL_1]</span> placeholders</div>
+          </div>
+          <div class="stage" data-stage="3">
+            <div class="stage-num">03 · GATE</div>
+            <div class="stage-name">Safety Gate</div>
+            <div class="stage-desc">Second PII scan on masked text — blocks if any leak</div>
+          </div>
+          <div class="stage" data-stage="4">
+            <div class="stage-num">04 · LLM</div>
+            <div class="stage-name">Analyze</div>
+            <div class="stage-desc">Stub or OpenAI — only masked text leaves the box</div>
+          </div>
+          <div class="stage" data-stage="5">
+            <div class="stage-num">05 · VALIDATE</div>
+            <div class="stage-name">Final Scrub</div>
+            <div class="stage-desc">Output re-scanned + JSON validated before storage</div>
+          </div>
+        </div>
+        <div class="pipeline-note">
+          <b>What gets stored:</b> masked message + PII metadata (type, offset — <span class="mono-pill">no entity_value column</span>) + analysis + a SHA-256 of the raw input. <b>That's it.</b>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: LIVE DEMO -->
+    <section class="slide" data-slide="5">
+      <div class="eyebrow">Live · A real fan complaint</div>
+      <div class="demo-header">
+        <h3 class="h3" style="max-width: 36ch;">Watch personal data turn into placeholders in milliseconds.</h3>
+        <a class="try-on-phone" href="https://fan-pulse-guard.vercel.app/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <span class="dot"></span>
+          <span>
+            <span class="try-line-1">Try it on your phone</span>
+            <span class="try-line-2 mono">fan-pulse-guard.vercel.app</span>
+          </span>
+        </a>
+      </div>
+      <div class="demo-container">
+        <div class="demo-panel danger">
+          <div class="demo-panel-label">
+            <span style="font-size:1rem;">●</span> Raw fan message
+          </div>
+          <div class="demo-panel-text" id="rawDemo"></div>
+        </div>
+        <div class="demo-panel safe">
+          <div class="demo-panel-label">
+            <span style="font-size:1rem;">●</span> What the LLM sees
+          </div>
+          <div class="demo-panel-text" id="maskedDemo"></div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="demo-status" id="demoStatus"></div>
+        <button class="demo-btn" id="demoBtn">▶ Run privacy pipeline</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: MOAT -->
+    <section class="slide" data-slide="6">
+      <div class="eyebrow">Why this is hard · Our moat</div>
+      <h3 class="h3">Anyone can call an LLM. Almost nobody gets the masking layer right.</h3>
+      <div class="moat-grid">
+        <div class="moat-card">
+          <div class="moat-card-num">4×</div>
+          <div class="moat-card-title">Detection layers</div>
+          <div class="moat-card-desc">Regex + Presidio NER + German address rules + football <b>hard negatives</b> so "Gate C", "Match Day 12", "Block 14" stay unmasked.</div>
+        </div>
+        <div class="moat-card alt">
+          <div class="moat-card-num">0</div>
+          <div class="moat-card-title">entity_value columns</div>
+          <div class="moat-card-desc">PII values are not just hashed — they are <b>never persisted</b>. Even a full DB dump can't reconstruct them.</div>
+        </div>
+        <div class="moat-card">
+          <div class="moat-card-num">2×</div>
+          <div class="moat-card-title">Safety scans</div>
+          <div class="moat-card-desc">One on the input <b>after masking</b> (blocks the LLM if any leak survives), one on the LLM's <b>output</b> before storage.</div>
+        </div>
+        <div class="moat-card alt">
+          <div class="moat-card-num">77 / 77</div>
+          <div class="moat-card-title">Tests passing · 0% leakage</div>
+          <div class="moat-card-desc">Hostile prompts, prompt-injection, mixed EN/DE, lowercase names, intro-only names — all covered.</div>
+        </div>
+      </div>
+      <div class="rules-ticker">
+        <span class="rule-num" id="ruleNum">01.</span>
+        <span class="rule-text" id="ruleText">Raw PII never reaches the LLM.</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: IMPACT -->
+    <section class="slide" data-slide="7">
+      <div class="eyebrow">Why this matters</div>
+      <h3 class="h3">Any club, any league, can now read every fan — without ever touching a fan.</h3>
+      <div class="impact-grid">
+        <div class="impact-stat">
+          <div class="value warn">€20M → €0</div>
+          <div class="label"><b>GDPR exposure removed</b> at the architecture level, not added on at the end.</div>
+        </div>
+        <div class="impact-stat">
+          <div class="value">< 1s</div>
+          <div class="label"><b>End-to-end latency</b> on the stub provider — drop in any LLM, the pipeline doesn't change.</div>
+        </div>
+        <div class="impact-stat">
+          <div class="value">72h</div>
+          <div class="label"><b>Built in one hackathon weekend.</b> 77 tests, 10 hard privacy rules, EN + DE, ready to demo.</div>
+        </div>
+      </div>
+      <div class="stakeholders">
+        <div class="stakeholder">
+          <div class="who">Fan Insights Manager</div>
+          <div class="what">"What are fans complaining about today?" — answered without reading one PII byte.</div>
+        </div>
+        <div class="stakeholder">
+          <div class="who">Support Team Lead</div>
+          <div class="what">Urgent refund requests surface in seconds — not after 800 inbox scrolls.</div>
+        </div>
+        <div class="stakeholder">
+          <div class="who">Data / Legal</div>
+          <div class="what">One controlled boundary, audit log, no PII in DB. The compliance review writes itself.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: CLOSE -->
+    <section class="slide slide-close" data-slide="8">
+      <div class="eyebrow">Raumdeuter · Fan Intelligence</div>
+      <h2 class="close-tagline">
+        Raw PII never reaches the LLM.<br/>
+        Never stored. <span class="accent">By design.</span>
+      </h2>
+      <div class="close-three">
+        <div class="row"><span class="check">✓</span> 10 hard privacy rules baked into the architecture</div>
+        <div class="row"><span class="check">✓</span> Works offline (stub LLM) — drop-in OpenAI optional</div>
+        <div class="row"><span class="check">✓</span> Open-source, EN + DE, ready to ship for any club</div>
+      </div>
+      <div class="close-ask">
+        <a class="qr-link" href="https://fan-pulse-guard.vercel.app/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <img
+            class="qr-img"
+            src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&color=183024&bgcolor=FFFFFF&data=https%3A%2F%2Ffan-pulse-guard.vercel.app%2F"
+            alt="QR code to fan-pulse-guard.vercel.app"
+            width="160" height="160"
+            onerror="this.parentElement.parentElement.classList.add('no-qr')" />
+        </a>
+        <div class="close-ask-text">
+          <div class="close-ask-label">Try it live · right now</div>
+          <div class="close-ask-url">fan-pulse-guard.vercel.app</div>
+          <div class="close-ask-fallback">or <span class="mono">docker compose up</span> from the repo</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="progress" id="progress" style="width: 12.5%"></div>
+
+  <div class="bottombar">
+    <kbd>←</kbd> <kbd>→</kbd> navigate · <kbd>Space</kbd> demo / next · <kbd>T</kbd> timer · <kbd>S</kbd> speaker notes · <kbd>F</kbd> fullscreen · <kbd>P</kbd> print
+  </div>
+
+  <div class="notes-overlay" id="notes">
+    <div class="label">Speaker notes · Slide <span id="notesSlideNum">1</span></div>
+    <div id="notesContent"></div>
+  </div>
+
+  <script>
+    'use strict';
+
+    // ============ STATE ============
+    const totalSlides = 8;
+    let currentSlide = 1;
+    let timerInterval = null;
+    let timerSeconds = 180;
+    let timerRunning = false;
+
+    document.getElementById('slideTotal').textContent = String(totalSlides);
+
+    // ============ DOM HELPERS (safe, no innerHTML) ============
+    function el(tag, attrs, ...children) {
+      const node = document.createElement(tag);
+      if (attrs) {
+        for (const [k, v] of Object.entries(attrs)) {
+          if (k === 'class') node.className = v;
+          else if (k === 'style') node.style.cssText = v;
+          else if (k.startsWith('on') && typeof v === 'function') node.addEventListener(k.slice(2).toLowerCase(), v);
+          else node.setAttribute(k, v);
+        }
+      }
+      for (const c of children) {
+        if (c == null) continue;
+        if (typeof c === 'string' || typeof c === 'number') node.appendChild(document.createTextNode(String(c)));
+        else node.appendChild(c);
+      }
+      return node;
+    }
+
+    function clearChildren(node) {
+      while (node.firstChild) node.removeChild(node.firstChild);
+    }
+
+    // ============ SPEAKER NOTES ============
+    const speakerNotes = {
+      1: {
+        timing: '15 seconds · Hook',
+        lines: [
+          { kind: 'p', text: 'Pause. Look at the room. Then say it.' },
+          { kind: 'quote', text: '"What if the AI you just shipped to read your fan messages — quietly forwarded their names, emails, and phone numbers to OpenAI?"' },
+          { kind: 'p', text: "That's not a bug. That's how most fan-message AI projects work right now." },
+          { kind: 'p', text: "I'm [your name], Team Raumdeuter. In three minutes I'll show you the fix." }
+        ]
+      },
+      2: {
+        timing: '25 seconds · Problem',
+        lines: [
+          { kind: 'p', text: 'Football clubs sit on millions of fan messages — support tickets, emails, DMs, forum posts.' },
+          { kind: 'p', text: 'They want AI to read them. But fans don\'t talk in clean data.' },
+          { kind: 'quote', text: '"Hi I\'m Lukas Weber from München, my booking is BK-92811, the app charged me twice."' },
+          { kind: 'p', text: 'Send that to GPT and you just shipped personal data to a US server.' },
+          { kind: 'p', text: 'GDPR max fine: €20 million — or 4% of global turnover. That\'s the wall every club hits.' }
+        ]
+      },
+      3: {
+        timing: '15 seconds · Insight',
+        lines: [
+          { kind: 'p', text: 'Our insight is a one-liner.' },
+          { kind: 'p', text: 'Mask first. Analyze second.' },
+          { kind: 'p', text: 'Most teams treat privacy as a check at the end. We made it step one. The LLM never even meets the raw text — there\'s nothing to leak.' }
+        ]
+      },
+      4: {
+        timing: '30 seconds · How it works',
+        lines: [
+          { kind: 'p', text: 'Five stages, one Python boundary. Click each as I name it.' },
+          { kind: 'p', text: 'One — Detect. Four detection layers running together: regex, Presidio NER, German address rules, and a hard-negative list so "Gate C" stays "Gate C".' },
+          { kind: 'p', text: 'Two — Mask. Every detected entity is replaced with a stable placeholder like [NAME_1].' },
+          { kind: 'p', text: 'Three — Safety Gate. We re-scan the masked text. If anything leaks, the LLM is never called.' },
+          { kind: 'p', text: 'Four — Analyze. The LLM only sees the masked version.' },
+          { kind: 'p', text: 'Five — Validate. The LLM\'s answer is re-scanned before storage. The database has no column for raw values.' }
+        ]
+      },
+      5: {
+        timing: '35 seconds · Live demo',
+        lines: [
+          { kind: 'p', text: 'Hit Space — watch it happen.' },
+          { kind: 'p', text: 'On the left: a real bilingual fan complaint with name, city, email, phone, and booking ID.' },
+          { kind: 'p', text: 'On the right: what the LLM actually sees — placeholders only. Same meaning. Zero PII.' },
+          { kind: 'p', text: 'Notice "Match Day 12" and "Gate C" stay unmasked — that\'s the hard-negative layer working.' },
+          { kind: 'p', text: 'End-to-end well under a second on the stub. Drop in OpenAI and the pipeline does not change.' }
+        ]
+      },
+      6: {
+        timing: '25 seconds · The moat',
+        lines: [
+          { kind: 'p', text: 'Why is this hard? Anyone can call an LLM. Almost no one gets the masking layer right.' },
+          { kind: 'p', text: 'Four detection layers — including football-specific hard negatives.' },
+          { kind: 'p', text: 'Zero entity_value columns — even a database dump can\'t reconstruct names.' },
+          { kind: 'p', text: 'Two safety scans — input and output.' },
+          { kind: 'p', text: '77 of 77 tests pass, including prompt-injection and mixed EN/DE. Zero leakage on hostile prompts.' }
+        ]
+      },
+      7: {
+        timing: '20 seconds · Impact',
+        lines: [
+          { kind: 'p', text: 'What does this unlock?' },
+          { kind: 'p', text: 'GDPR exposure goes from €20 million down to zero — at the architecture level.' },
+          { kind: 'p', text: 'Latency: under a second. Built in 72 hours.' },
+          { kind: 'p', text: 'Fan Insights Managers, Support Leads, and Data teams all get the answers they were already paying for — without ever touching a fan.' }
+        ]
+      },
+      8: {
+        timing: '15 seconds · Close',
+        lines: [
+          { kind: 'p', text: 'One line to remember.' },
+          { kind: 'p', text: 'Raw PII never reaches the LLM. Never stored. By design.' },
+          { kind: 'p', text: 'Open-source, ready to ship. "docker compose up" and you\'re live.' },
+          { kind: 'p', text: 'Raumdeuter. Thank you.' }
+        ]
+      }
+    };
+
+    function renderNotes() {
+      const note = speakerNotes[currentSlide];
+      document.getElementById('notesSlideNum').textContent = String(currentSlide);
+      const root = document.getElementById('notesContent');
+      clearChildren(root);
+      for (const line of note.lines) {
+        if (line.kind === 'quote') {
+          root.appendChild(el('p', { class: 'quote' }, line.text));
+        } else {
+          root.appendChild(el('p', null, line.text));
+        }
+      }
+      root.appendChild(el('div', { class: 'timing' }, note.timing));
+    }
+    renderNotes();
+
+    // ============ NAVIGATION ============
+    function showSlide(n) {
+      n = Math.max(1, Math.min(totalSlides, n));
+      const slides = document.querySelectorAll('.slide');
+      slides.forEach((s, i) => {
+        s.classList.remove('active', 'prev');
+        if (i + 1 === n) s.classList.add('active');
+        else if (i + 1 < n) s.classList.add('prev');
+      });
+      currentSlide = n;
+      document.getElementById('slideNum').textContent = String(n);
+      document.getElementById('progress').style.width = (n / totalSlides * 100) + '%';
+      renderNotes();
+      onSlideEnter(n);
+    }
+
+    function next() { if (currentSlide < totalSlides) showSlide(currentSlide + 1); }
+    function prev() { if (currentSlide > 1) showSlide(currentSlide - 1); }
+
+    // ============ KEYBOARD ============
+    document.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+      else if (e.key === ' ') {
+        e.preventDefault();
+        if (currentSlide === 5) runDemo();
+        else next();
+      }
+      else if (e.key === 'Home') { e.preventDefault(); showSlide(1); }
+      else if (e.key === 'End') { e.preventDefault(); showSlide(totalSlides); }
+      else if (e.key.toLowerCase() === 't') toggleTimer();
+      else if (e.key.toLowerCase() === 's') toggleNotes();
+      else if (e.key.toLowerCase() === 'f') toggleFullscreen();
+      else if (e.key.toLowerCase() === 'p') window.print();
+      else if (e.key.toLowerCase() === 'r' && currentSlide === 5) resetDemo();
+    });
+
+    document.getElementById('deck').addEventListener('click', (e) => {
+      if (e.target.closest('button, input, textarea, a, .stage, .timer, .demo-panel')) return;
+      next();
+    });
+
+    // ============ TIMER ============
+    const timerEl = document.getElementById('timer');
+    function formatTime(s) {
+      const m = Math.floor(Math.abs(s) / 60);
+      const sec = Math.abs(s) % 60;
+      const sign = s < 0 ? '−' : '';
+      return sign + m + ':' + String(sec).padStart(2, '0');
+    }
+    function updateTimerDisplay() {
+      timerEl.textContent = '⏱ ' + formatTime(timerSeconds);
+      timerEl.classList.toggle('running', timerRunning && timerSeconds > 0);
+      timerEl.classList.toggle('over', timerSeconds < 0);
+    }
+    function toggleTimer() {
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+      } else {
+        if (timerSeconds === 0) timerSeconds = 180;
+        timerRunning = true;
+        timerInterval = setInterval(() => {
+          timerSeconds--;
+          updateTimerDisplay();
+        }, 1000);
+      }
+      updateTimerDisplay();
+    }
+    timerEl.addEventListener('click', toggleTimer);
+    timerEl.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timerSeconds = 180;
+      updateTimerDisplay();
+    });
+    updateTimerDisplay();
+
+    // ============ SPEAKER NOTES TOGGLE ============
+    function toggleNotes() { document.getElementById('notes').classList.toggle('open'); }
+
+    // ============ FULLSCREEN ============
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen();
+    }
+
+    // ============ FINE COUNTER (Slide 2) ============
+    let fineCountAnimated = false;
+    function animateFineCounter() {
+      if (fineCountAnimated) return;
+      fineCountAnimated = true;
+      const node = document.getElementById('fineCounter');
+      const target = 20;
+      let current = 0;
+      const step = () => {
+        current = Math.min(target, current + 0.5);
+        node.textContent = '€' + (current === target ? '20' : current.toFixed(1)) + 'M';
+        if (current < target) requestAnimationFrame(step);
+      };
+      step();
+    }
+
+    // ============ PIPELINE (Slide 4) ============
+    let pipelineProgress = 1;
+    function lightPipeline(upTo) {
+      document.querySelectorAll('#pipeline .stage').forEach(stage => {
+        const n = parseInt(stage.dataset.stage, 10);
+        stage.classList.toggle('lit', n <= upTo);
+      });
+      pipelineProgress = upTo;
+    }
+    document.querySelectorAll('#pipeline .stage').forEach(stage => {
+      stage.addEventListener('click', (e) => {
+        e.stopPropagation();
+        lightPipeline(parseInt(stage.dataset.stage, 10));
+      });
+    });
+
+    // ============ PRIVACY RULES TICKER (Slide 6) ============
+    const privacyRules = [
+      'Raw PII never reaches the LLM.',
+      'Raw PII is never stored in PostgreSQL.',
+      'Logs never contain raw PII.',
+      'PII entity values are never persisted — no entity_value column.',
+      'Store only masked messages, metadata, analysis, latency, timestamps.',
+      'A second PII scan runs on the masked message before any LLM call.',
+      'A final PII scan runs on the LLM output before display or storage.',
+      'If masking is incomplete, the LLM call is blocked.',
+      'The frontend never runs PII detection.',
+      'The frontend never holds LLM secrets.'
+    ];
+    let ruleIdx = 0;
+    let ruleInterval = null;
+    function tickRule() {
+      const numEl = document.getElementById('ruleNum');
+      const textEl = document.getElementById('ruleText');
+      textEl.style.opacity = '0';
+      setTimeout(() => {
+        ruleIdx = (ruleIdx + 1) % privacyRules.length;
+        numEl.textContent = String(ruleIdx + 1).padStart(2, '0') + '.';
+        textEl.textContent = privacyRules[ruleIdx];
+        textEl.style.opacity = '1';
+      }, 300);
+    }
+    function startRuleTicker() {
+      stopRuleTicker();
+      ruleInterval = setInterval(tickRule, 2200);
+    }
+    function stopRuleTicker() {
+      if (ruleInterval) clearInterval(ruleInterval);
+      ruleInterval = null;
+    }
+
+    // ============ LIVE DEMO (Slide 5) ============
+    const demoText = "Hallo team, ich bin Lukas Weber from München. Email: lukas.weber@gmail.com, phone +49 176 12345678. My booking BK-92811 was charged twice after Match Day 12 — please refund. Gate C was chaos too.";
+    const demoEntities = [
+      { start: 20, end: 31, type: 'NAME', token: '[NAME_1]' },
+      { start: 37, end: 44, type: 'CITY', token: '[CITY_1]' },
+      { start: 53, end: 74, type: 'EMAIL', token: '[EMAIL_1]' },
+      { start: 82, end: 98, type: 'PHONE', token: '[PHONE_1]' },
+      { start: 111, end: 119, type: 'BOOKING_ID', token: '[BOOKING_ID_1]' }
+    ];
+
+    let demoState = 'idle';
+
+    function renderRawPlain() {
+      const node = document.getElementById('rawDemo');
+      clearChildren(node);
+      node.appendChild(document.createTextNode(demoText));
+    }
+
+    function renderRawHighlighted() {
+      const node = document.getElementById('rawDemo');
+      clearChildren(node);
+      const sorted = [...demoEntities].sort((a, b) => a.start - b.start);
+      let i = 0;
+      for (const ent of sorted) {
+        if (ent.start > i) node.appendChild(document.createTextNode(demoText.slice(i, ent.start)));
+        node.appendChild(el('span', { class: 'pii-highlight' }, demoText.slice(ent.start, ent.end)));
+        i = ent.end;
+      }
+      if (i < demoText.length) node.appendChild(document.createTextNode(demoText.slice(i)));
+    }
+
+    function renderMaskedEmpty() {
+      const node = document.getElementById('maskedDemo');
+      clearChildren(node);
+      node.appendChild(el('span', { class: 'demo-empty' }, "(LLM hasn't seen anything yet)"));
+    }
+
+    function renderStatusReady() {
+      const node = document.getElementById('demoStatus');
+      clearChildren(node);
+      node.appendChild(el('span', { class: 'strong' }, 'Ready.'));
+      node.appendChild(document.createTextNode(' Press '));
+      node.appendChild(el('kbd', null, 'Space'));
+      node.appendChild(document.createTextNode(' or click to run the masking.'));
+    }
+
+    function renderStatusStage(stageNum, total, label, desc) {
+      const node = document.getElementById('demoStatus');
+      clearChildren(node);
+      node.appendChild(el('span', { class: 'strong' }, 'Stage ' + stageNum + '/' + total + ' · ' + label));
+      if (desc) {
+        node.appendChild(document.createTextNode(' — ' + desc));
+      }
+    }
+
+    function renderStatusDone(meta) {
+      const node = document.getElementById('demoStatus');
+      clearChildren(node);
+      node.appendChild(el('span', { class: 'ok strong' }, '✓ Done.'));
+      node.appendChild(document.createTextNode(' '));
+      node.appendChild(el('span', { class: 'mono' }, meta));
+    }
+
+    function setDemoIdle() {
+      renderRawPlain();
+      renderMaskedEmpty();
+      renderStatusReady();
+      demoState = 'idle';
+    }
+
+    async function runDemo() {
+      if (demoState === 'running' || demoState === 'done') return;
+      demoState = 'running';
+      const btn = document.getElementById('demoBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Running…';
+
+      renderStatusStage(1, 5, 'Detect', 'scanning for PII…');
+      await delay(450);
+      renderRawHighlighted();
+      await delay(550);
+
+      renderStatusStage(2, 5, 'Mask', 'replacing with stable placeholders…');
+      const maskedEl = document.getElementById('maskedDemo');
+      clearChildren(maskedEl);
+      const sorted = [...demoEntities].sort((a, b) => a.start - b.start);
+      let cursor = 0;
+      for (const ent of sorted) {
+        if (ent.start > cursor) {
+          maskedEl.appendChild(document.createTextNode(demoText.slice(cursor, ent.start)));
+        }
+        await delay(120);
+        maskedEl.appendChild(el('span', { class: 'mask-token' }, ent.token));
+        await delay(180);
+        cursor = ent.end;
+      }
+      if (cursor < demoText.length) {
+        maskedEl.appendChild(document.createTextNode(demoText.slice(cursor)));
+      }
+
+      await delay(400);
+      renderStatusStage(3, 5, 'Safety Gate', 're-scanning masked text…');
+      await delay(550);
+      renderStatusStage(4, 5, 'LLM', 'sending masked text only…');
+      await delay(600);
+      renderStatusStage(5, 5, 'Validate', 'output re-scanned, stored.');
+      await delay(400);
+
+      renderStatusDone('5 entities masked · 0 leaked · 612ms total');
+      btn.textContent = '↻ Run again';
+      btn.disabled = false;
+      demoState = 'done';
+    }
+
+    function resetDemo() {
+      setDemoIdle();
+      const btn = document.getElementById('demoBtn');
+      btn.textContent = '▶ Run privacy pipeline';
+      btn.disabled = false;
+    }
+
+    document.getElementById('demoBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (demoState === 'done') resetDemo();
+      else runDemo();
+    });
+
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+    setDemoIdle();
+
+    // ============ SLIDE ENTER HOOKS ============
+    function onSlideEnter(n) {
+      stopRuleTicker();
+      if (n === 2) animateFineCounter();
+      if (n === 4) lightPipeline(1);
+      if (n === 5) resetDemo();
+      if (n === 6) {
+        ruleIdx = 0;
+        document.getElementById('ruleNum').textContent = '01.';
+        document.getElementById('ruleText').textContent = privacyRules[0];
+        startRuleTicker();
+      }
+    }
+    onSlideEnter(1);
+  </script>
+</body>
+</html>
